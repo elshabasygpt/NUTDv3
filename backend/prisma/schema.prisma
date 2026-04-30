@@ -1,0 +1,271 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// User & Auth Management
+// ==========================================
+enum Role {
+  ADMIN
+  DEALER
+}
+
+enum Tier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(DEALER)
+  name      String
+  phone     String?  @unique
+  isActive  Boolean  @default(false) // Needs admin approval to login
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  dealerProfile DealerProfile?
+  orders        Order[]
+  warranties    Warranty[]
+  cart          Cart?
+}
+
+model DealerProfile {
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyName    String
+  taxNumber      String?
+  commercialReg  String?
+  tier           Tier    @default(BRONZE)
+  discountRate   Float   @default(0) // Override tier discount if needed
+  
+  city           String
+  address        String?
+  latitude       Float?
+  longitude      Float?
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ==========================================
+// Catalog Management
+// ==========================================
+model Product {
+  id            String   @id @default(cuid())
+  partNumber    String   @unique // OE Number
+  name_ar       String
+  name_en       String
+  brand         String
+  category      String
+  
+  retailPrice   Float    // Base price for consumers
+  wholesalePrice Float   // Base price for dealers (before tier discount)
+  
+  stock         Int      @default(0)
+  image         String?
+  
+  rating        Float?   @default(4.5)
+  reviews       Int?     @default(0)
+  
+  carMakes      String[] // e.g. ["Volkswagen", "Skoda"]
+  carModels     String[] // e.g. ["Golf", "Octavia"]
+  
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+}
+
+// ==========================================
+// Order Management
+// ==========================================
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique // e.g. ORD-2024-001
+  
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  
+  status        OrderStatus @default(PENDING)
+  subTotal      Float
+  discount      Float       @default(0)
+  total         Float
+  
+  shippingAddr  String?
+  notes         String?
+  pdfInvoiceUrl String?
+  
+  items         OrderItem[]
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  unitPrice Float // Price at the time of order
+  total     Float
+}
+
+// ==========================================
+// Cart Management
+// ==========================================
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  items     CartItem[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  quantity  Int      @default(1)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([cartId, productId])
+}
+
+// ==========================================
+// Warranty Management
+// ==========================================
+enum WarrantyStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  EXPIRED
+}
+
+model Warranty {
+  id             String         @id @default(cuid())
+  warrantyNumber String         @unique
+  
+  userId         String?        // Can be null if registered by unregistered consumer
+  user           User?          @relation(fields: [userId], references: [id])
+  
+  customerName   String
+  customerPhone  String
+  
+  vin            String         // Vehicle Identification Number
+  carMake        String
+  carModel       String
+  carYear        Int
+  
+  partNumber     String
+  invoiceImage   String?        // URL to uploaded invoice
+  
+  status         WarrantyStatus @default(PENDING)
+  
+  activationDate DateTime?
+  expiryDate     DateTime?
+  
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+// ==========================================
+// System Settings
+// ==========================================
+model Setting {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// CMS Management
+// ==========================================
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  excerpt   String
+  content   String   @db.Text
+  image     String?
+  author    String
+  category  String
+  date      String   // e.g. "2024-03-15"
+  
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Agency {
+  id          String   @id @default(cuid())
+  name        String
+  logo        String?
+  description String   @db.Text
+  origin      String
+  specialty   String
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Offer {
+  id          String   @id @default(cuid())
+  partNumber  String
+  oeNumber    String
+  name        String
+  brand       String
+  category    String
+  
+  packageType String   // e.g. "كرتونة (12 طقم)"
+  moq         Int      @default(1)
+  
+  oldPrice    Float
+  newPrice    Float
+  stockInfo   String   // e.g. "متاح 50 كرتونة"
+  image       String?
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

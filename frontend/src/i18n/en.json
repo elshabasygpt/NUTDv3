@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "brands": "Brands",
+    "features": "Features",
+    "dealers": "Find Dealer",
+    "blog": "Blog",
+    "dashboard": "Dealer Dashboard",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Quality You Can Rely On",
+    "subtitle": "Performance That Lasts Longer",
+    "description": "Genuine spare parts from the world's top brands",
+    "searchPlaceholder": "Search by part number or product name...",
+    "selectBrand": "Select Brand",
+    "selectCarType": "Select Car Type",
+    "selectCategory": "Select Category",
+    "searchBtn": "Search"
+  },
+  "brands": {
+    "title": "Our Brands",
+    "Borsehung": {
+      "tagline": "European Quality",
+      "desc": "Reliable Performance"
+    },
+    "vika": {
+      "tagline": "High Compatibility",
+      "desc": "Meets Global Standards"
+    },
+    "kdd": {
+      "tagline": "Smart Choice",
+      "desc": "For Cars That Last"
+    },
+    "exploreBtn": "Explore Products"
+  },
+  "features": {
+    "quality": {
+      "title": "Guaranteed Quality",
+      "desc": "100% Genuine Products"
+    },
+    "warranty": {
+      "title": "Official Warranty",
+      "desc": "On All Products"
+    },
+    "delivery": {
+      "title": "Fast Delivery",
+      "desc": "Nationwide Shipping"
+    },
+    "support": {
+      "title": "Technical Support",
+      "desc": "Expert Team to Help You"
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works?",
+    "step1": { "title": "Search for a Part", "desc": "Search by part number or product name" },
+    "step2": { "title": "Choose a Product", "desc": "Select the right product for your car" },
+    "step3": { "title": "View Specifications", "desc": "Read specs and confirm compatibility" },
+    "step4": { "title": "Find Nearest Dealer", "desc": "Locate your nearest authorized dealer" }
+  },
+  "dealers": {
+    "title": "Find Nearest Dealer",
+    "searchPlaceholder": "Search by city...",
+    "city": "City",
+    "distance": "Distance",
+    "phone": "Phone",
+    "directions": "Directions",
+    "showAll": "Show All Dealers"
+  },
+  "products": {
+    "title": "Products",
+    "all": "All Products",
+    "addToCart": "Add to Cart",
+    "viewDetails": "Details",
+    "partNumber": "Part Number",
+    "brand": "Brand",
+    "price": "Price",
+    "sar": "SAR",
+    "findDealer": "Find Nearest Dealer",
+    "specs": "Specifications",
+    "noResults": "No matching products found"
+  },
+  "blog": {
+    "title": "Tips & Maintenance",
+    "readMore": "Read More",
+    "viewAll": "View All Articles"
+  },
+  "newsletter": {
+    "title": "Subscribe for Updates",
+    "desc": "Get exclusive new products and maintenance tips delivered to your inbox",
+    "placeholder": "Enter your email address",
+    "btn": "Subscribe"
+  },
+  "footer": {
+    "about": "About NUTD",
+    "aboutDesc": "Namā United Trading & Distribution, an authorized importer and distributor of automotive spare parts. We offer the best spare parts from globally renowned brands, committed to quality and lasting performance.",
+    "quickLinks": "Quick Links",
+    "brands": "Brands",
+    "contact": "Contact Us",
+    "phone": "9200 123 45",
+    "email": "info@nutd.com.sa",
+    "address": "Riyadh, Saudi Arabia",
+    "rights": "© 2024 Namā United Trading & Distribution. All rights reserved.",
+    "products": "Products",
+    "dealers": "Dealer Directory",
+    "features": "Offers & Collections",
+    "joinUs": "Join Us"
+  },
+  "dashboard": {
+    "title": "Dealer Dashboard",
+    "search": "Smart Search",
+    "orders": "Orders",
+    "inventory": "Inventory",
+    "quickActions": "Quick Actions",
+    "newOrder": "New Order",
+    "totalOrders": "Total Orders",
+    "totalValue": "Total Value",
+    "pending": "Pending",
+    "completed": "Completed",
+    "status": "Status",
+    "orderDate": "Order Date",
+    "total": "Total"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "sar": "SAR",
+    "km": "km"
+  }
+}
