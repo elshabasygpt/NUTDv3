@@ -1,45 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Star, MapPin, Award, Zap, Wrench, ChevronLeft, Building2 } from 'lucide-react';
-
-const PREMIUM_DEALERS = [
-  {
-    id: '1',
-    name: 'كيمو ستور - المركز الرئيسي',
-    logo: null,
-    rating: 4.9,
-    reviews: 128,
-    location: 'القاهرة، مدينة نصر',
-    badges: ['premium', 'fast'],
-  },
-  {
-    id: '2',
-    name: 'الشركة الهندسية لقطع الغيار',
-    logo: null,
-    rating: 4.7,
-    reviews: 85,
-    location: 'الإسكندرية، سموحة',
-    badges: ['premium', 'installation'],
-  },
-  {
-    id: '3',
-    name: 'أوتو ماركت الرضوان',
-    logo: null,
-    rating: 4.8,
-    reviews: 210,
-    location: 'الجيزة، الدقي',
-    badges: ['premium'],
-  },
-  {
-    id: '4',
-    name: 'المركز العالمي للسيارات',
-    logo: null,
-    rating: 4.6,
-    reviews: 94,
-    location: 'القاهرة، التجمع الخامس',
-    badges: ['fast', 'installation'],
-  }
-];
+import { useSettings } from '../../contexts/SettingsContext';
 
 const renderBadge = (badge: string) => {
   switch (badge) {
@@ -57,6 +19,11 @@ const renderBadge = (badge: string) => {
 const PremiumDealers = () => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+  const { settings } = useSettings();
+
+  const dealers = settings.homepage_dealers || [];
+
+  if (!dealers || dealers.length === 0) return null;
 
   return (
     <section className="py-20 bg-white border-b border-gray-100">
@@ -81,7 +48,7 @@ const PremiumDealers = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PREMIUM_DEALERS.map((dealer) => (
+          {dealers.map((dealer) => (
             <div key={dealer.id} className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300 group flex flex-col h-full">
               
               {/* Header: Logo & Rating */}

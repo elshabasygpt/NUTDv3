@@ -153,7 +153,15 @@ const DEFAULT_SETTINGS: Record<string, string> = {
       ]
     }
   ]),
-  homepage_wholesale: JSON.stringify([
+  homepage_wholesale: JSON.stringify({
+    titleAr: 'عروض الجملة الحصرية',
+    titleEn: 'Exclusive Wholesale Offers',
+    subtitleAr: 'فرص استثمارية للتجار',
+    subtitleEn: 'Dealer Investment Opportunities',
+    savingsTitleAr: 'إجمالي توفير التجار هذا الشهر',
+    savingsTitleEn: 'Dealers Savings This Month',
+    totalSavings: '+450,000 EGP',
+    offers: [
     { 
       id: '101', 
       name: 'طقم تيل فرامل أمامي', 
@@ -209,6 +217,44 @@ const DEFAULT_SETTINGS: Record<string, string> = {
       savings: 9000,
       stock: 'متاح 30 كرتونة',
       image: 'https://images.unsplash.com/photo-1606524177742-b062b9a7b93a?w=300&q=80' 
+    }
+  ]}),
+  homepage_dealers: JSON.stringify([
+    {
+      id: '1',
+      name: 'كيمو ستور - المركز الرئيسي',
+      logo: null,
+      rating: 4.9,
+      reviews: 128,
+      location: 'القاهرة، مدينة نصر',
+      badges: ['premium', 'fast'],
+    },
+    {
+      id: '2',
+      name: 'الشركة الهندسية لقطع الغيار',
+      logo: null,
+      rating: 4.7,
+      reviews: 85,
+      location: 'الإسكندرية، سموحة',
+      badges: ['premium', 'installation'],
+    },
+    {
+      id: '3',
+      name: 'أوتو ماركت الرضوان',
+      logo: null,
+      rating: 4.8,
+      reviews: 210,
+      location: 'الجيزة، الدقي',
+      badges: ['premium'],
+    },
+    {
+      id: '4',
+      name: 'المركز العالمي للسيارات',
+      logo: null,
+      rating: 4.6,
+      reviews: 94,
+      location: 'القاهرة، التجمع الخامس',
+      badges: ['fast', 'installation'],
     }
   ])
 };

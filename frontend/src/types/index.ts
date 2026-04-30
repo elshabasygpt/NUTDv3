@@ -170,6 +170,27 @@ export interface WholesaleOfferSettings {
   image: string;
 }
 
+export interface WholesaleSettings {
+  titleAr: string;
+  titleEn: string;
+  subtitleAr: string;
+  subtitleEn: string;
+  savingsTitleAr: string;
+  savingsTitleEn: string;
+  totalSavings: string;
+  offers: WholesaleOfferSettings[];
+}
+
+export interface PremiumDealerSettings {
+  id: string;
+  name: string;
+  logo: string | null;
+  rating: number;
+  reviews: number;
+  location: string;
+  badges: string[];
+}
+
 export interface SiteSettings {
   header_phone?: string;
   header_logo?: string;
@@ -179,5 +200,6 @@ export interface SiteSettings {
   homepage_brands?: string; // JSON string of PromoBannerSettings[]
   homepage_carmakes?: string; // JSON string of CarMakeSettings[]
   homepage_categories?: string; // JSON string of CategorySettings[]
-  homepage_wholesale?: string; // JSON string of WholesaleOfferSettings[]
+  homepage_wholesale?: string; // JSON string of WholesaleSettings
+  homepage_dealers?: string; // JSON string of PremiumDealerSettings[]
 }

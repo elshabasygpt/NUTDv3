@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
-import { defaultHero, defaultFeatures, defaultBrands, defaultCarMakes, defaultCategories, defaultWholesale } from '../utils/defaultSettings';
-import type { HeroSettings, FeatureSettings, PromoBannerSettings, CarMakeSettings, CategorySettings, WholesaleOfferSettings } from '../types';
+import { defaultHero, defaultFeatures, defaultBrands, defaultCarMakes, defaultCategories, defaultWholesale, defaultPremiumDealers } from '../utils/defaultSettings';
+import type { HeroSettings, FeatureSettings, PromoBannerSettings, CarMakeSettings, CategorySettings, WholesaleSettings, PremiumDealerSettings } from '../types';
 
 export interface NavLink {
   labelEN: string;
@@ -18,7 +18,8 @@ interface Settings {
   homepage_brands?: PromoBannerSettings[];
   homepage_carmakes?: CarMakeSettings[];
   homepage_categories?: CategorySettings[];
-  homepage_wholesale?: WholesaleOfferSettings[];
+  homepage_wholesale?: WholesaleSettings;
+  homepage_dealers?: PremiumDealerSettings[];
 }
 
 interface SettingsContextType {
@@ -45,7 +46,8 @@ const defaultSettings: Settings = {
   homepage_brands: defaultBrands,
   homepage_carmakes: defaultCarMakes,
   homepage_categories: defaultCategories,
-  homepage_wholesale: defaultWholesale
+  homepage_wholesale: defaultWholesale,
+  homepage_dealers: defaultPremiumDealers
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -65,7 +67,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const parsedBrands = rawData.homepage_brands ? JSON.parse(rawData.homepage_brands) : [];
         const parsedCarMakes = rawData.homepage_carmakes ? JSON.parse(rawData.homepage_carmakes) : [];
         const parsedCategories = rawData.homepage_categories ? JSON.parse(rawData.homepage_categories) : [];
-        const parsedWholesale = rawData.homepage_wholesale ? JSON.parse(rawData.homepage_wholesale) : [];
+        const parsedWholesale = rawData.homepage_wholesale ? JSON.parse(rawData.homepage_wholesale) : null;
+        const parsedDealers = rawData.homepage_dealers ? JSON.parse(rawData.homepage_dealers) : [];
 
         setSettings({
           ...rawData,
@@ -77,7 +80,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           homepage_brands: parsedBrands.length > 0 ? parsedBrands : defaultBrands,
           homepage_carmakes: parsedCarMakes.length > 0 ? parsedCarMakes : defaultCarMakes,
           homepage_categories: parsedCategories.length > 0 ? parsedCategories : defaultCategories,
-          homepage_wholesale: parsedWholesale.length > 0 ? parsedWholesale : defaultWholesale
+          homepage_wholesale: parsedWholesale && Object.keys(parsedWholesale).length > 0 ? parsedWholesale : defaultWholesale,
+          homepage_dealers: parsedDealers.length > 0 ? parsedDealers : defaultPremiumDealers
         });
       }
     } catch (error) {

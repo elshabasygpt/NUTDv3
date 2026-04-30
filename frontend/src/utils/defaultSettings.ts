@@ -112,61 +112,109 @@ export const defaultCategories = [
   }
 ];
 
-export const defaultWholesale = [
-  { 
-    id: '101', 
-    name: 'طقم تيل فرامل أمامي', 
-    brand: 'Borsehung', 
-    oeNumber: '4D0698151D',
-    partNumber: 'BR-1234',
-    packageType: 'كرتونة (12 طقم)',
-    moq: 1, 
-    oldPrice: 14400, 
-    newPrice: 10200, 
-    savings: 4200,
-    stock: 'متاح 50 كرتونة',
-    image: 'https://images.unsplash.com/photo-1600705722908-bab1e61c0b4d?w=300&q=80' 
+export const defaultWholesale = {
+  titleAr: 'عروض الجملة الحصرية',
+  titleEn: 'Exclusive Wholesale Offers',
+  subtitleAr: 'فرص استثمارية للتجار',
+  subtitleEn: 'Dealer Investment Opportunities',
+  savingsTitleAr: 'إجمالي توفير التجار هذا الشهر',
+  savingsTitleEn: 'Dealers Savings This Month',
+  totalSavings: '+450,000 EGP',
+  offers: [
+    { 
+      id: '101', 
+      name: 'طقم تيل فرامل أمامي', 
+      brand: 'Borsehung', 
+      oeNumber: '4D0698151D',
+      partNumber: 'BR-1234',
+      packageType: 'كرتونة (12 طقم)',
+      moq: 1, 
+      oldPrice: 14400, 
+      newPrice: 10200, 
+      savings: 4200,
+      stock: 'متاح 50 كرتونة',
+      image: 'https://images.unsplash.com/photo-1600705722908-bab1e61c0b4d?w=300&q=80' 
+    },
+    { 
+      id: '102', 
+      name: 'فلتر زيت أصلي', 
+      brand: 'Vika', 
+      oeNumber: '06L115562B',
+      partNumber: 'VKA-3344',
+      packageType: 'عرض: اشترِ 20 واحصل على 5 مجاناً',
+      moq: 25, 
+      oldPrice: 6250, 
+      newPrice: 5000, 
+      savings: 1250,
+      stock: 'متاح 150 عرض',
+      image: 'https://images.unsplash.com/photo-1503376710356-6f8e437011d8?w=300&q=80' 
+    },
+    { 
+      id: '103', 
+      name: 'مساعدين أمامي (طقم)', 
+      brand: 'KDD', 
+      oeNumber: '1K0413031',
+      partNumber: 'KDD-9101',
+      packageType: 'بالتة (10 أطقم)',
+      moq: 1, 
+      oldPrice: 35000, 
+      newPrice: 28000, 
+      savings: 7000,
+      stock: 'متاح 10 بالتات',
+      image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&q=80' 
+    },
+    { 
+      id: '104', 
+      name: 'طقم سيور كامل', 
+      brand: 'Borsehung', 
+      oeNumber: '5Q0129620B',
+      partNumber: 'BR-1122',
+      packageType: 'كرتونة (20 طقم)',
+      moq: 1, 
+      oldPrice: 36000, 
+      newPrice: 27000, 
+      savings: 9000,
+      stock: 'متاح 30 كرتونة',
+      image: 'https://images.unsplash.com/photo-1606524177742-b062b9a7b93a?w=300&q=80' 
+    }
+  ]
+};
+
+export const defaultPremiumDealers = [
+  {
+    id: '1',
+    name: 'كيمو ستور - المركز الرئيسي',
+    logo: null,
+    rating: 4.9,
+    reviews: 128,
+    location: 'القاهرة، مدينة نصر',
+    badges: ['premium', 'fast'],
   },
-  { 
-    id: '102', 
-    name: 'فلتر زيت أصلي', 
-    brand: 'Vika', 
-    oeNumber: '06L115562B',
-    partNumber: 'VKA-3344',
-    packageType: 'عرض: اشترِ 20 واحصل على 5 مجاناً',
-    moq: 25, 
-    oldPrice: 6250, 
-    newPrice: 5000, 
-    savings: 1250,
-    stock: 'متاح 150 عرض',
-    image: 'https://images.unsplash.com/photo-1503376710356-6f8e437011d8?w=300&q=80' 
+  {
+    id: '2',
+    name: 'الشركة الهندسية لقطع الغيار',
+    logo: null,
+    rating: 4.7,
+    reviews: 85,
+    location: 'الإسكندرية، سموحة',
+    badges: ['premium', 'installation'],
   },
-  { 
-    id: '103', 
-    name: 'مساعدين أمامي (طقم)', 
-    brand: 'KDD', 
-    oeNumber: '1K0413031',
-    partNumber: 'KDD-9101',
-    packageType: 'بالتة (10 أطقم)',
-    moq: 1, 
-    oldPrice: 35000, 
-    newPrice: 28000, 
-    savings: 7000,
-    stock: 'متاح 10 بالتات',
-    image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=300&q=80' 
+  {
+    id: '3',
+    name: 'أوتو ماركت الرضوان',
+    logo: null,
+    rating: 4.8,
+    reviews: 210,
+    location: 'الجيزة، الدقي',
+    badges: ['premium'],
   },
-  { 
-    id: '104', 
-    name: 'طقم سيور كامل', 
-    brand: 'Borsehung', 
-    oeNumber: '5Q0129620B',
-    partNumber: 'BR-1122',
-    packageType: 'كرتونة (20 طقم)',
-    moq: 1, 
-    oldPrice: 36000, 
-    newPrice: 27000, 
-    savings: 9000,
-    stock: 'متاح 30 كرتونة',
-    image: 'https://images.unsplash.com/photo-1606524177742-b062b9a7b93a?w=300&q=80' 
+  {
+    id: '4',
+    name: 'المركز العالمي للسيارات',
+    logo: null,
+    rating: 4.6,
+    reviews: 94,
+    location: 'القاهرة، التجمع الخامس',
+    badges: ['fast', 'installation'],
   }
 ];

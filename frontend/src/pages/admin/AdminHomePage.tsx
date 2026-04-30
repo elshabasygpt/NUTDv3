@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Save, Plus, Trash2, Image as ImageIcon, LayoutTemplate, Type, Shield, LayoutGrid, Upload, Car, Layers, Package } from 'lucide-react';
 import api from '../../services/api';
-import type { HeroSettings, FeatureSettings, PromoBannerSettings, CarMakeSettings, CategorySettings, WholesaleOfferSettings } from '../../types';
-import { defaultHero, defaultFeatures, defaultBrands, defaultCarMakes, defaultCategories, defaultWholesale } from '../../utils/defaultSettings';
+import type { HeroSettings, FeatureSettings, PromoBannerSettings, CarMakeSettings, CategorySettings, WholesaleSettings, PremiumDealerSettings } from '../../types';
+import { defaultHero, defaultFeatures, defaultBrands, defaultCarMakes, defaultCategories, defaultWholesale, defaultPremiumDealers } from '../../utils/defaultSettings';
 
 const AdminHomePage = () => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   
-  const [activeTab, setActiveTab] = useState<'hero' | 'features' | 'brands' | 'carmakes' | 'categories' | 'wholesale'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'features' | 'brands' | 'carmakes' | 'categories' | 'wholesale' | 'dealers'>('hero');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -18,7 +18,8 @@ const AdminHomePage = () => {
   const [brands, setBrands] = useState<PromoBannerSettings[]>([]);
   const [carMakes, setCarMakes] = useState<CarMakeSettings[]>([]);
   const [categories, setCategories] = useState<CategorySettings[]>([]);
-  const [wholesaleOffers, setWholesaleOffers] = useState<WholesaleOfferSettings[]>([]);
+  const [wholesaleSettings, setWholesaleSettings] = useState<WholesaleSettings | null>(null);
+  const [dealers, setDealers] = useState<PremiumDealerSettings[]>([]);
 
   // For managing models of a specific make
   const [selectedMakeId, setSelectedMakeId] = useState<number | null>(null);
@@ -36,14 +37,16 @@ const AdminHomePage = () => {
           const bnds = JSON.parse(res.data.data.homepage_brands || '[]');
           const makes = JSON.parse(res.data.data.homepage_carmakes || '[]');
           const cats = JSON.parse(res.data.data.homepage_categories || '[]');
-          const wholesale = JSON.parse(res.data.data.homepage_wholesale || '[]');
+          const wholesale = JSON.parse(res.data.data.homepage_wholesale || 'null');
+          const dls = JSON.parse(res.data.data.homepage_dealers || '[]');
 
           setHeroSettings(Object.keys(hero).length > 0 ? hero : defaultHero);
           setFeatures(feats.length > 0 ? feats : defaultFeatures);
           setBrands(bnds.length > 0 ? bnds : defaultBrands);
           setCarMakes(makes.length > 0 ? makes : defaultCarMakes);
           setCategories(cats.length > 0 ? cats : defaultCategories);
-          setWholesaleOffers(wholesale.length > 0 ? wholesale : defaultWholesale);
+          setWholesaleSettings(wholesale && Object.keys(wholesale).length > 0 ? wholesale : defaultWholesale);
+          setDealers(dls.length > 0 ? dls : defaultPremiumDealers);
         }
       } catch (error) {
         console.error('Failed to fetch homepage settings', error);
@@ -63,7 +66,8 @@ const AdminHomePage = () => {
         homepage_brands: JSON.stringify(brands),
         homepage_carmakes: JSON.stringify(carMakes),
         homepage_categories: JSON.stringify(categories),
-        homepage_wholesale: JSON.stringify(wholesaleOffers)
+        homepage_wholesale: JSON.stringify(wholesaleSettings),
+        homepage_dealers: JSON.stringify(dealers)
       });
       alert(isRTL ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
     } catch (error) {
@@ -179,6 +183,15 @@ const AdminHomePage = () => {
         >
           <Package size={18} />
           {isRTL ? 'عروض الجملة' : 'Wholesale'}
+        </button>
+        <button
+          onClick={() => setActiveTab('dealers')}
+          className={`pb-3 px-4 font-bold text-sm flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${
+            activeTab === 'dealers' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'
+          }`}
+        >
+          <Shield size={18} />
+          {isRTL ? 'الموزعين' : 'Premium Dealers'}
         </button>
       </div>
 
@@ -800,24 +813,53 @@ const AdminHomePage = () => {
         </div>
       )}
 
-      {activeTab === 'wholesale' && (
-        <div className="space-y-4">
-          <div className="flex justify-end mb-4">
+      {activeTab === 'wholesale' && wholesaleSettings && (
+        <div className="space-y-6">
+          
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">{isRTL ? 'إعدادات قسم عروض الجملة' : 'Wholesale Section Settings'}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Title (Arabic)</label>
+                <input type="text" value={wholesaleSettings.titleAr} onChange={e => setWholesaleSettings({...wholesaleSettings, titleAr: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm focus:border-primary outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Title (English)</label>
+                <input type="text" value={wholesaleSettings.titleEn} onChange={e => setWholesaleSettings({...wholesaleSettings, titleEn: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm focus:border-primary outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Subtitle (Arabic)</label>
+                <input type="text" value={wholesaleSettings.subtitleAr} onChange={e => setWholesaleSettings({...wholesaleSettings, subtitleAr: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm focus:border-primary outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Subtitle (English)</label>
+                <input type="text" value={wholesaleSettings.subtitleEn} onChange={e => setWholesaleSettings({...wholesaleSettings, subtitleEn: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm focus:border-primary outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Savings Title (Arabic)</label>
+                <input type="text" value={wholesaleSettings.savingsTitleAr} onChange={e => setWholesaleSettings({...wholesaleSettings, savingsTitleAr: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm focus:border-primary outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 mb-1">Savings Title (English)</label>
+                <input type="text" value={wholesaleSettings.savingsTitleEn} onChange={e => setWholesaleSettings({...wholesaleSettings, savingsTitleEn: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm focus:border-primary outline-none" />
+              </div>
+              <div className="col-span-1 md:col-span-2">
+                <label className="block text-xs font-bold text-gray-500 mb-1">Total Savings Text (e.g. +450,000 EGP)</label>
+                <input type="text" value={wholesaleSettings.totalSavings} onChange={e => setWholesaleSettings({...wholesaleSettings, totalSavings: e.target.value})} className="w-full border border-gray-200 rounded-lg p-2 text-sm font-bold text-green-600 focus:border-primary outline-none" dir="ltr" />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold text-gray-900">{isRTL ? 'بطاقات العروض' : 'Offer Cards'}</h3>
             <button 
-              onClick={() => setWholesaleOffers([...wholesaleOffers, { 
-                id: `wh_${Date.now()}`, 
-                name: 'New Offer', 
-                brand: 'Brand', 
-                oeNumber: '', 
-                partNumber: '', 
-                packageType: 'كرتونة', 
-                moq: 1, 
-                oldPrice: 0, 
-                newPrice: 0, 
-                savings: 0, 
-                stock: 'متاح', 
-                image: '' 
-              }])}
+              onClick={() => setWholesaleSettings({
+                ...wholesaleSettings,
+                offers: [...wholesaleSettings.offers, { 
+                  id: `wh_${Date.now()}`, name: 'New Offer', brand: 'Brand', oeNumber: '', partNumber: '', 
+                  packageType: 'كرتونة', moq: 1, oldPrice: 0, newPrice: 0, savings: 0, stock: 'متاح', image: '' 
+                }]
+              })}
               className="bg-gray-900 text-white px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-gray-800 transition-colors"
             >
               <Plus size={16} /> {isRTL ? 'إضافة عرض جملة' : 'Add Wholesale Offer'}
@@ -825,10 +867,13 @@ const AdminHomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {wholesaleOffers.map((offer, index) => (
+            {wholesaleSettings.offers.map((offer, index) => (
               <div key={offer.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col relative group">
                 <button 
-                  onClick={() => setWholesaleOffers(wholesaleOffers.filter(o => o.id !== offer.id))}
+                  onClick={() => setWholesaleSettings({
+                    ...wholesaleSettings,
+                    offers: wholesaleSettings.offers.filter(o => o.id !== offer.id)
+                  })}
                   className="absolute top-2 end-2 text-white bg-red-500/80 hover:bg-red-500 p-1.5 rounded-lg z-20 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Trash2 size={14} />
@@ -841,7 +886,9 @@ const AdminHomePage = () => {
                       <Upload size={16} className="mb-1" />
                       <span className="text-[10px] font-bold">Upload</span>
                       <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, (url) => {
-                        const n = [...wholesaleOffers]; n[index].image = url; setWholesaleOffers(n);
+                        const newOffers = [...wholesaleSettings.offers];
+                        newOffers[index].image = url;
+                        setWholesaleSettings({ ...wholesaleSettings, offers: newOffers });
                       })} />
                     </label>
                   </div>
@@ -850,22 +897,34 @@ const AdminHomePage = () => {
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1">Name</label>
-                        <input type="text" value={offer.name} onChange={e => { const n = [...wholesaleOffers]; n[index].name = e.target.value; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                        <input type="text" value={offer.name} onChange={e => { 
+                          const newOffers = [...wholesaleSettings.offers]; newOffers[index].name = e.target.value; 
+                          setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                        }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1">Brand</label>
-                        <input type="text" value={offer.brand} onChange={e => { const n = [...wholesaleOffers]; n[index].brand = e.target.value; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                        <input type="text" value={offer.brand} onChange={e => { 
+                          const newOffers = [...wholesaleSettings.offers]; newOffers[index].brand = e.target.value; 
+                          setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                        }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
                       </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1">OE Number</label>
-                        <input type="text" value={offer.oeNumber} onChange={e => { const n = [...wholesaleOffers]; n[index].oeNumber = e.target.value; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs font-mono focus:border-primary outline-none" />
+                        <input type="text" value={offer.oeNumber} onChange={e => { 
+                          const newOffers = [...wholesaleSettings.offers]; newOffers[index].oeNumber = e.target.value; 
+                          setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                        }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs font-mono focus:border-primary outline-none" />
                       </div>
                       <div>
                         <label className="block text-[10px] font-bold text-gray-500 mb-1">Part Number</label>
-                        <input type="text" value={offer.partNumber} onChange={e => { const n = [...wholesaleOffers]; n[index].partNumber = e.target.value; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs font-mono focus:border-primary outline-none" />
+                        <input type="text" value={offer.partNumber} onChange={e => { 
+                          const newOffers = [...wholesaleSettings.offers]; newOffers[index].partNumber = e.target.value; 
+                          setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                        }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs font-mono focus:border-primary outline-none" />
                       </div>
                     </div>
                   </div>
@@ -875,22 +934,36 @@ const AdminHomePage = () => {
                   <div className="grid grid-cols-3 gap-2">
                     <div className="col-span-2">
                       <label className="block text-[10px] font-bold text-gray-500 mb-1">Package Type (e.g. كرتونة)</label>
-                      <input type="text" value={offer.packageType} onChange={e => { const n = [...wholesaleOffers]; n[index].packageType = e.target.value; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                      <input type="text" value={offer.packageType} onChange={e => { 
+                        const newOffers = [...wholesaleSettings.offers]; newOffers[index].packageType = e.target.value; 
+                        setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                      }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-gray-500 mb-1">MOQ</label>
-                      <input type="number" value={offer.moq} onChange={e => { const n = [...wholesaleOffers]; n[index].moq = Number(e.target.value); setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                      <input type="number" value={offer.moq} onChange={e => { 
+                        const newOffers = [...wholesaleSettings.offers]; newOffers[index].moq = Number(e.target.value); 
+                        setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                      }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2">
                     <div>
                       <label className="block text-[10px] font-bold text-gray-500 mb-1">Old Price</label>
-                      <input type="number" value={offer.oldPrice} onChange={e => { const n = [...wholesaleOffers]; n[index].oldPrice = Number(e.target.value); setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                      <input type="number" value={offer.oldPrice} onChange={e => { 
+                        const newOffers = [...wholesaleSettings.offers]; newOffers[index].oldPrice = Number(e.target.value); 
+                        setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                      }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-gray-500 mb-1">New Price</label>
-                      <input type="number" value={offer.newPrice} onChange={e => { const n = [...wholesaleOffers]; n[index].newPrice = Number(e.target.value); n[index].savings = n[index].oldPrice - n[index].newPrice; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                      <input type="number" value={offer.newPrice} onChange={e => { 
+                        const newOffers = [...wholesaleSettings.offers]; 
+                        newOffers[index].newPrice = Number(e.target.value); 
+                        newOffers[index].savings = newOffers[index].oldPrice - newOffers[index].newPrice; 
+                        setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                      }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-gray-500 mb-1">Savings</label>
@@ -900,7 +973,113 @@ const AdminHomePage = () => {
                   
                   <div>
                     <label className="block text-[10px] font-bold text-gray-500 mb-1">Stock Status (e.g. متاح 50 كرتونة)</label>
-                    <input type="text" value={offer.stock} onChange={e => { const n = [...wholesaleOffers]; n[index].stock = e.target.value; setWholesaleOffers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                    <input type="text" value={offer.stock} onChange={e => { 
+                      const newOffers = [...wholesaleSettings.offers]; newOffers[index].stock = e.target.value; 
+                      setWholesaleSettings({ ...wholesaleSettings, offers: newOffers }); 
+                    }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'dealers' && (
+        <div className="space-y-4">
+          <div className="flex justify-end mb-4">
+            <button 
+              onClick={() => setDealers([...dealers, { 
+                id: `dl_${Date.now()}`, 
+                name: 'New Dealer', 
+                logo: null,
+                rating: 5.0,
+                reviews: 0,
+                location: '',
+                badges: []
+              }])}
+              className="bg-gray-900 text-white px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-gray-800 transition-colors"
+            >
+              <Plus size={16} /> {isRTL ? 'إضافة موزع معتمد' : 'Add Premium Dealer'}
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {dealers.map((dealer, index) => (
+              <div key={dealer.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col relative group">
+                <button 
+                  onClick={() => setDealers(dealers.filter(d => d.id !== dealer.id))}
+                  className="absolute top-2 end-2 text-white bg-red-500/80 hover:bg-red-500 p-1.5 rounded-lg z-20 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Trash2 size={14} />
+                </button>
+
+                <div className="p-4 bg-gray-50/50 flex flex-col items-center border-b border-gray-100">
+                  <div className="w-24 h-24 bg-white rounded-xl relative group/img flex items-center justify-center overflow-hidden border border-gray-200 shrink-0 mb-3">
+                    {dealer.logo ? <img src={dealer.logo} alt="Logo" className="w-full h-full object-contain p-2" /> : <ImageIcon size={24} className="text-gray-300" />}
+                    <label className="absolute inset-0 bg-black/50 text-white flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 cursor-pointer transition-opacity z-10">
+                      <Upload size={16} className="mb-1" />
+                      <span className="text-[10px] font-bold">Upload Logo</span>
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, (url) => {
+                        const n = [...dealers]; n[index].logo = url; setDealers(n);
+                      })} />
+                    </label>
+                  </div>
+                  
+                  <div className="w-full">
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">Dealer Name</label>
+                    <input type="text" value={dealer.name} onChange={e => { const n = [...dealers]; n[index].name = e.target.value; setDealers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-3 flex-1">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">Location</label>
+                    <input type="text" value={dealer.location} onChange={e => { const n = [...dealers]; n[index].location = e.target.value; setDealers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-500 mb-1">Rating (e.g. 4.9)</label>
+                      <input type="number" step="0.1" max="5" value={dealer.rating} onChange={e => { const n = [...dealers]; n[index].rating = Number(e.target.value); setDealers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-500 mb-1">Reviews Count</label>
+                      <input type="number" value={dealer.reviews} onChange={e => { const n = [...dealers]; n[index].reviews = Number(e.target.value); setDealers(n); }} className="w-full border border-gray-200 rounded-lg p-1.5 text-xs focus:border-primary outline-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1">Badges (check to enable)</label>
+                    <div className="flex flex-col gap-2 mt-2">
+                      <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={dealer.badges.includes('premium')} onChange={(e) => {
+                          const n = [...dealers];
+                          if (e.target.checked) n[index].badges.push('premium');
+                          else n[index].badges = n[index].badges.filter(b => b !== 'premium');
+                          setDealers(n);
+                        }} className="rounded border-gray-300 text-primary focus:ring-primary" />
+                        معتمد ذهبي (Premium)
+                      </label>
+                      <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={dealer.badges.includes('fast')} onChange={(e) => {
+                          const n = [...dealers];
+                          if (e.target.checked) n[index].badges.push('fast');
+                          else n[index].badges = n[index].badges.filter(b => b !== 'fast');
+                          setDealers(n);
+                        }} className="rounded border-gray-300 text-primary focus:ring-primary" />
+                        استجابة سريعة (Fast)
+                      </label>
+                      <label className="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer">
+                        <input type="checkbox" checked={dealer.badges.includes('installation')} onChange={(e) => {
+                          const n = [...dealers];
+                          if (e.target.checked) n[index].badges.push('installation');
+                          else n[index].badges = n[index].badges.filter(b => b !== 'installation');
+                          setDealers(n);
+                        }} className="rounded border-gray-300 text-primary focus:ring-primary" />
+                        يتوفر تركيب (Installation)
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>

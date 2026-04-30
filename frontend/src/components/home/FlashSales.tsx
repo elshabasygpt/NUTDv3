@@ -8,9 +8,11 @@ const FlashSales = () => {
   const isRTL = i18n.language === 'ar';
   const { settings } = useSettings();
 
-  const wholesaleOffers = settings.homepage_wholesale || [];
+  const wholesaleData = settings.homepage_wholesale;
+  
+  if (!wholesaleData || !wholesaleData.offers || wholesaleData.offers.length === 0) return null;
 
-  if (!wholesaleOffers || wholesaleOffers.length === 0) return null;
+  const wholesaleOffers = wholesaleData.offers;
 
   return (
     <section className="py-16 bg-gray-50 relative overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
@@ -21,18 +23,24 @@ const FlashSales = () => {
           <div>
             <div className="flex items-center gap-2 text-primary font-bold mb-3">
               <Boxes size={20} />
-              <span className="uppercase tracking-wider">{isRTL ? 'فرص استثمارية للتجار' : 'Dealer Investment Opportunities'}</span>
+              <span className="uppercase tracking-wider">
+                {isRTL ? wholesaleData.subtitleAr : wholesaleData.subtitleEn}
+              </span>
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-[#1C1C1C]">
-              {isRTL ? 'عروض الجملة الحصرية' : 'Exclusive Wholesale Offers'}
+              {isRTL ? wholesaleData.titleAr : wholesaleData.titleEn}
             </h2>
           </div>
           
           <div className="bg-white px-5 py-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
             <TrendingUp size={24} className="text-green-600" />
             <div>
-              <p className="text-xs font-bold text-gray-500">{isRTL ? 'إجمالي توفير التجار هذا الشهر' : 'Dealers Savings This Month'}</p>
-              <p className="text-xl font-black text-[#1C1C1C]" dir="ltr">+450,000 EGP</p>
+              <p className="text-xs font-bold text-gray-500">
+                {isRTL ? wholesaleData.savingsTitleAr : wholesaleData.savingsTitleEn}
+              </p>
+              <p className="text-xl font-black text-[#1C1C1C]" dir="ltr">
+                {wholesaleData.totalSavings}
+              </p>
             </div>
           </div>
         </div>
